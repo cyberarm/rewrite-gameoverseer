@@ -120,22 +120,18 @@ module GameOverseer
     end
 
     def clean_messages(count)
-      puts :triggered
       @messages_cleaned = false
       Thread.start do
         while @messages.count >= count
           @messages.delete(@messages.first)
         end
-        puts "Completed"
         @messages_cleaned = true
       end
     end
 
     def button_up(id)
-      p id
       case id
       when 41
-        puts "esc"
         # Quit?
       when 40
         submit_text($window.text_input.text)
@@ -147,7 +143,7 @@ module GameOverseer
         scroll(:down)
       when 43
         1000.times do
-          submit_text("#{SecureRandom.uuid}")
+          submit_text("#{SecureRandom.uuid} #{SecureRandom.hex} #{SecureRandom.base64}")
         end
       end
     end
