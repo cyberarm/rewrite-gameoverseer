@@ -8,8 +8,6 @@ module GameOverseer
 
       @default_text_instance = Gosu::Font.new($window, 'Consolas', 18)
       @messages = []
-      @messages_cleaned = true
-
       setup_ui
     end
 
@@ -28,19 +26,22 @@ module GameOverseer
     def setup_ui
       @current_text = text_instance
       @current_text_x = 4
+
       @messages << {
-        text: "Good Morning!",
+        text: '',
         instance: text_instance,
         x: 4,
-        y: 428,
+        y: 480-26-18,
         z: 1
-        }
+      }
+
+      submit_text("#{Time.now.strftime('%c')}", false)
     end
 
     def draw_ui
-      draw_rect(0,0, 720, 26, Gosu::Color::RED)
+      draw_rect(0,0, 720, 26, Gosu::Color.rgb(200, 75, 25))
       draw_rect(0,454, 720, 480, Gosu::Color::WHITE)
-      text_instance.draw("GameOverSeer Console. GameOverseer version #{GameOverSeer::VERSION}-#{GameOverSeer::RELEASE_NAME}-#{@messages.count}", 4, 4, 3)
+      text_instance.draw("GameOverSeer Console. GameOverseer version #{GameOverSeer::VERSION} #{GameOverSeer::RELEASE_NAME} #{@messages.count}", 4, 4, 3)
       @current_text.draw("#{$window.text_input.text}", @current_text_x, 458, 3,  1,1, Gosu::Color::BLACK)
       draw_rect(@caret+@current_text_x, 456, 2.0+@caret+@current_text_x, 474, Gosu::Color::BLUE, 4) if defined?(@caret) && @render_caret
 
@@ -50,24 +51,13 @@ module GameOverseer
     end
 
     def update_ui
-      @clean_tick = 0 unless defined?(@clean_tick)
-
-      if @clean_tick >= 120
-        count = @messages.count
-        if count >= 567
-          clean_messages(567) if @messages_cleaned
-        end
-        @clean_tick = 0
-      end
-      @clean_tick+=1
-
       @caret = @current_text.text_width($window.text_input.text[0...$window.text_input.caret_pos])
 
       @caret_tick = 0 unless defined?(@caret_tick)
-      @render_caret = true if @caret_tick < 30
+      @render_caret = true if @caret_tick < 15
       @render_caret = false if @caret_tick > 30
 
-      @caret_tick = 0 unless @caret_tick < 60
+      @caret_tick = 0 unless @caret_tick < 45
       @caret_tick+=1
 
       value = @current_text.text_width($window.text_input.text)+@current_text_x
@@ -86,31 +76,48 @@ module GameOverseer
       $window.draw_quad(x1, y1, color, x2, y1, color, x1, y2, color, x2, y2, color, z)
     end
 
-    def submit_text(text)
+    def submit_text(text, from_console = true)
       if text.length > 0
-        @messages.each do |message|
-          message[:y]-=18
-        end
-        @messages << {
-          text: text,
-          instance: text_instance,
-          x: 4,
-          y: @messages.last[:y]+18,
-          z: 1
+        clean_messages(567)
+        text = "Console> #{text}" if from_console
+        if text.length > 83
+          temp_text = text[0..83]
+          @messages.each do |message|
+            message[:y]-=18
+          end
+          @messages << {
+            text: temp_text,
+            instance: text_instance,
+            x: 4,
+            y: @messages.last[:y]+18,
+            z: 1
           }
-        $window.text_input = Gosu::TextInput.new
+          submit_text(text[83..text.length], false)
+        else
+          @messages.each do |message|
+            message[:y]-=18
+          end
+          @messages << {
+            text: text,
+            instance: text_instance,
+            x: 4,
+            y: @messages.last[:y]+18,
+            z: 1
+          }
+        end
+        $window.text_input = Gosu::TextInput.new if from_console
       end
     end
 
     def scroll(direction)
       case direction
-      when :up
+      when :down
         if @messages.last[:y] >= 480-26-18
           @messages.each do |message|
             message[:y]-=18
           end
         end
-      when :down
+      when :up
         if @messages.first[:y] <= 26#<= 480-26-32
           @messages.each do |message|
             message[:y]+=18
@@ -120,30 +127,27 @@ module GameOverseer
     end
 
     def clean_messages(count)
-      @messages_cleaned = false
-      Thread.start do
-        while @messages.count >= count
-          @messages.delete(@messages.first)
-        end
-        @messages_cleaned = true
+      if @messages.count >= count
+        @messages.delete(@messages.first)
       end
     end
 
     def button_up(id)
       case id
-      when 41
+      when 41 # Escape
         # Quit?
-      when 40
+      when 40 # Enter
         submit_text($window.text_input.text)
-      when 88
+      when 88 # Numpad Enter
         submit_text($window.text_input.text)
-      when 259
+      when 259 # Mouse wheel
         scroll(:up)
-      when 260
+      when 260  # Mouse wheel
         scroll(:down)
       when 43
+        # Test massive console dump
         1000.times do
-          submit_text("#{SecureRandom.uuid} #{SecureRandom.hex} #{SecureRandom.base64}")
+          submit_text("#{SecureRandom.uuid} #{SecureRandom.hex}", false)
         end
       end
     end

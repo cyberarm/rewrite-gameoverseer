@@ -1,7 +1,15 @@
 module GameOverSeer
   module Services
-    def self.register(klass)
+    LIST = []
 
+    def self.register(klass)
+      LIST << klass
+    end
+
+    def self.enable
+      LIST.each do |service|
+        service.new.enable
+      end
     end
   end
 end

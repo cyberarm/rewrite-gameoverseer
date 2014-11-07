@@ -2,6 +2,7 @@ require "net/ssh"
 require "socket"
 require "securerandom"
 require "gosu"
+require "multi_json"
 
 require_relative "version"
 
