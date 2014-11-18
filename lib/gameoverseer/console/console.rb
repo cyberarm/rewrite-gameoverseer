@@ -1,5 +1,8 @@
 module GameOverseer
   class Console < Gosu::Window
+    # TODO: Use Gosu::Window.record to lower number of objects that need to be updated
+
+    PENDING_LOG = []
     def initialize
       super(720, 480, false)
       $window = self
@@ -27,9 +30,11 @@ module GameOverseer
       @current_text = text_instance
       @current_text_x = 4
 
+      # Required first message
       @messages << {
         text: '',
         instance: text_instance,
+        color: Gosu::Color::WHITE,
         x: 4,
         y: 480-26-18,
         z: 1
@@ -42,15 +47,21 @@ module GameOverseer
       draw_rect(0,0, 720, 26, Gosu::Color.rgb(200, 75, 25))
       draw_rect(0,454, 720, 480, Gosu::Color::WHITE)
       text_instance.draw("GameOverSeer Console. GameOverseer version #{GameOverSeer::VERSION} #{GameOverSeer::RELEASE_NAME} #{@messages.count}", 4, 4, 3)
-      @current_text.draw("#{$window.text_input.text}", @current_text_x, 458, 3,  1,1, Gosu::Color::BLACK)
+      @current_text.draw("#{$window.text_input.text}", @current_text_x, 458, 3, 1, 1, Gosu::Color::BLACK)
       draw_rect(@caret+@current_text_x, 456, 2.0+@caret+@current_text_x, 474, Gosu::Color::BLUE, 4) if defined?(@caret) && @render_caret
 
       @messages.each do |message|
-        message[:instance].draw(message[:text],message[:x],message[:y],message[:z])
+        message[:instance].draw(message[:text],message[:x],message[:y],message[:z], 1, 1, message[:color])
+        p message[:color] unless message[:color] == Gosu::Color::WHITE
       end
     end
 
     def update_ui
+      PENDING_LOG.each do |log_message|
+        submit_text(log_message, false) if log_message.strip.length > 0
+        PENDING_LOG.delete(log_message)
+      end
+
       @caret = @current_text.text_width($window.text_input.text[0...$window.text_input.caret_pos])
 
       @caret_tick = 0 unless defined?(@caret_tick)
@@ -72,53 +83,20 @@ module GameOverseer
       @default_text_instance
     end
 
-    def draw_rect(x1,y1, x2,y2, color=Gosu::Color::GRAY, z=2)
+    def draw_rect(x1,y1, x2,y2, color = Gosu::Color::GRAY, z = 2)
       $window.draw_quad(x1, y1, color, x2, y1, color, x1, y2, color, x2, y2, color, z)
-    end
-
-    def submit_text(text, from_console = true)
-      if text.length > 0
-        clean_messages(567)
-        text = "Console> #{text}" if from_console
-        if text.length > 83
-          temp_text = text[0..83]
-          @messages.each do |message|
-            message[:y]-=18
-          end
-          @messages << {
-            text: temp_text,
-            instance: text_instance,
-            x: 4,
-            y: @messages.last[:y]+18,
-            z: 1
-          }
-          submit_text(text[83..text.length], false)
-        else
-          @messages.each do |message|
-            message[:y]-=18
-          end
-          @messages << {
-            text: text,
-            instance: text_instance,
-            x: 4,
-            y: @messages.last[:y]+18,
-            z: 1
-          }
-        end
-        $window.text_input = Gosu::TextInput.new if from_console
-      end
     end
 
     def scroll(direction)
       case direction
       when :down
-        if @messages.last[:y] >= 480-26-18
+        if @messages.last[:y] >= 480 - 26 - 18
           @messages.each do |message|
             message[:y]-=18
           end
         end
       when :up
-        if @messages.first[:y] <= 26#<= 480-26-32
+        if @messages.first[:y] <= 26#<= 480 - 26 - 32
           @messages.each do |message|
             message[:y]+=18
           end
@@ -149,6 +127,77 @@ module GameOverseer
         1000.times do
           submit_text("#{SecureRandom.uuid} #{SecureRandom.hex}", false)
         end
+      end
+    end
+
+    def self.log(string)
+      self.log_it(string) if string.strip.length > 0
+      begin NoMethodError
+        ObjectSpace.each_object(GameOverseer::Console).first.submit_text(string, false)
+      rescue
+        self.defer_log(string)
+      end
+    end
+
+    def self.log_with_color(string, color = Gosu::Color::WHITE)
+      self.log_it(string) if string.strip.length > 0
+      begin NoMethodError
+        ObjectSpace.each_object(GameOverseer::Console).first.submit_text(string, false, color)
+      rescue
+        self.defer_log(string)
+      end
+    end
+
+    def self.defer_log(string)
+      PENDING_LOG << string
+    end
+
+    def self.log_it(string)
+      puts string
+      begin
+        @log_file = File.open("#{Dir.pwd}/logs/log-#{Time.now.strftime('%B-%d-%H-%Y')}.txt", 'a+') unless defined? @log_file
+      rescue Errno::ENOENT
+        Dir.mkdir("#{Dir.pwd}/logs") unless File.exist?("#{Dir.pwd}/logs") && File.directory?("#{Dir.pwd}/logs")
+        retry
+      end
+
+      @log_file.write "[#{Time.now.strftime('%c')}] #{string}\n"
+    end
+
+    protected
+    def submit_text(text, from_console = true, color = Gosu::Color::WHITE)
+      if text.strip.length > 0
+        clean_messages(300)
+        text = "Console> #{text}" if from_console
+        GameOverseer::Console.log_it(text)
+        if text.length > 83
+          temp_text = text[0..83]
+          @messages.each do |message|
+            message[:y]-=18
+          end
+          @messages << {
+            text: temp_text,
+            instance: text_instance,
+            color: color,
+            x: 4,
+            y: @messages.last[:y] + 18,
+            z: 1
+          }
+          submit_text(text[83..text.length], false)
+        else
+          @messages.each do |message|
+            message[:y]-=18
+          end
+          @messages << {
+            text: text,
+            instance: text_instance,
+            color: color,
+            x: 4,
+            y: @messages.last[:y] + 18,
+            z: 1
+          }
+        end
+        $window.text_input = Gosu::TextInput.new if from_console
       end
     end
   end
