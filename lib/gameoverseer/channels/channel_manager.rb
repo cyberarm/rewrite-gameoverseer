@@ -13,11 +13,12 @@ module GameOverseer
       _channel = channel.downcase
       unless @channels[_channel]
         @channels[_channel] = service
+        GameOverseer::Console.log("ChannelManager> mapped '#{_channel}' to '#{service.class}'.")
       end
-      GameOverseer::Console.log("ChannelManager> mapped '#{_channel}' to '#{service.class}'.")
     end
 
     def send_to_service(data, socket)
+      GameOverseer::Console.log("ChannelManager> sent '#{data}' to '#{@channels[data['channel']].class}'.")
       @channels[data['channel']].socket = socket
       @channels[data['channel']].process(data)
     end

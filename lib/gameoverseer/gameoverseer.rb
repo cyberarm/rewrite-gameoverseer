@@ -31,7 +31,6 @@ Thread.abort_on_exception = true
 module GameOverseer
   def self.activate(host,port)
     GameOverseer::ChannelManager.new
-    GameOverseer::MessageManager.new
 
     @server  = Thread.new {GameOverseer::TCPServerRunner.new.start(host, port)}
     console = GameOverseer::Console.new.show

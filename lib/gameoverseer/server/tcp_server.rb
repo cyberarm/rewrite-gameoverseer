@@ -6,8 +6,7 @@ module GameOverseer
     def initialize(host, port)
       GameOverseer::Console.log("Server> Started on: #{host}:#{port}.")
       GameOverseer::Services.enable
-
-      @message_manager = ObjectSpace.each_object(GameOverseer::MessageManager).first
+      @message_manager = GameOverseer::MessageManager.new
 
       @server = TCPServer.new(host = '0.0.0.0', port)
       async.run
