@@ -2,7 +2,6 @@ module GameOverseer
   class InternalService
     class Handshake < GameOverseer::Service
       def setup
-        p channel_manager
         channel_manager.register_channel('handshake', self)
       end
 

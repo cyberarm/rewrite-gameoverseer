@@ -32,19 +32,19 @@ module GameOverseer
   def self.activate(host,port)
     GameOverseer::ChannelManager.new
     GameOverseer::MessageManager.new
-    @server  = Thread.new {GameOverseer::ENetServerRunner.new.start(host, port)}
-    console = GameOverseer::Console.new.show
+    @server  = GameOverseer::ENetServerRunner.new.start(host, port)
+    console = GameOverseer::Console.new#.show
 
     Signal.trap("INT") do
-      GameOverseer::Console.instance.close
-      @server.supervisor.terminate
+      # GameOverseer::Console.instance.close
+      # @server.supervisor.terminate
       puts "Server Shutdown"
     end
   end
 
   def self.deactivate
     puts "ALERT \"CONSOLE CLOSED. LOST CONTROL OF SERVER.\""
-    @server.supervisor.terminate
+    # @server.supervisor.terminate
   end
 end
 

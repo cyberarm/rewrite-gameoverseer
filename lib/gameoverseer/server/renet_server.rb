@@ -1,6 +1,6 @@
 module GameOverseer
   class ENetServer
-    include Celluloid
+    # include Celluloid
 
     def initialize(host, port)
       GameOverseer::Console.log("Server> Started on: #{host}:#{port}.")
@@ -13,17 +13,19 @@ module GameOverseer
       @server.on_connection(method(:on_connect))
       @server.on_packet_receive(method(:on_packet))
       @server.on_disconnection(method(:on_disconnect))
-      async.run
+      run
     end
 
     def run
       loop do
         @server.update(1000)
+        handle_messages
       end
     end
 
-    def on_packet(data, channel)
-      p "Packet: #{data}-#{channel}"
+    def on_packet(id, data, channel)
+      p "Packet: #{id}-#{data}-#{channel}"
+      @server.send_packet(id, "HELLO", true, 0)
     end
 
     def on_connect(data, channel)
@@ -68,7 +70,7 @@ module GameOverseer
   class ENetServerRunner
     attr_reader :supervisor
     def start(host, port)
-      @supervisor = GameOverseer::ENetServer.supervise(host, port)
+      @supervisor = GameOverseer::ENetServer.new(host, port)
     end
 
     def supervisor
