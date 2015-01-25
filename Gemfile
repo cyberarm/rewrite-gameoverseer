@@ -4,6 +4,7 @@ source "https://rubygems.org"
 
 gem "gosu"
 gem "nio4r", git: "https://github.com/MagLev/nio4r.git", branch: "johnnyt/recursive-lock-fix"
-gem "celluloid-io"
+gem "celluloid"
+gem "renet", git: "https://github.com/jvranish/rENet.git"
 gem "multi_json"
 gem "net-ssh"

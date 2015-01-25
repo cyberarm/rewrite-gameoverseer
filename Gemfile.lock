@@ -4,22 +4,24 @@ GIT
   branch: johnnyt/recursive-lock-fix
   specs:
     nio4r (1.0.1)
-    nio4r (1.0.1-java)
+
+GIT
+  remote: https://github.com/jvranish/rENet.git
+  revision: b6d2560b7cc7e9b2414b34eb672d6ab33e802807
+  specs:
+    renet (0.2.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     celluloid (0.16.0)
       timers (~> 4.0.0)
-    celluloid-io (0.16.1)
-      celluloid (>= 0.16.0)
-      nio4r (>= 1.0.0)
-    gosu (0.8.5)
-    gosu (0.8.5-x86-mingw32)
-    hitimes (1.2.2)
+    gosu (0.8.7.2)
+    gosu (0.8.7.2-x86-mingw32)
     hitimes (1.2.2-java)
+    hitimes (1.2.2-x86-mingw32)
     multi_json (1.10.1)
-    net-ssh (2.9.1)
+    net-ssh (2.9.2)
     timers (4.0.1)
       hitimes
 
@@ -28,8 +30,9 @@ PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
-  celluloid-io
+  celluloid
   gosu
   multi_json
   net-ssh
   nio4r!
+  renet!

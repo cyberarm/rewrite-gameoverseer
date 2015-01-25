@@ -4,6 +4,7 @@ module GameOverseer
 
     PENDING_LOG = []
     def initialize
+      GameOverseer::Console.instance = self
       super(720, 480, false)
       $window = self
       $window.caption = "GameOverseer Console"
@@ -128,6 +129,14 @@ module GameOverseer
           submit_text("#{SecureRandom.uuid} #{SecureRandom.hex}", false)
         end
       end
+    end
+
+    def self.instance
+      @instance
+    end
+
+    def self.instance=_instance
+      @instance = _instance
     end
 
     def self.log(string)

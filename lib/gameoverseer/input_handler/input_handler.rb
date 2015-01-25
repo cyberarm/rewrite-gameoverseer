@@ -18,7 +18,7 @@ module GameOverseer
     def self.forward_to_channel_manager
       count = 0
       begin
-        channel_manager = ObjectSpace.each_object(GameOverseer::ChannelManager).first
+        channel_manager = GameOverseer::ChannelManager.instance
         channel_manager.send_to_service(@data, @socket)
       rescue NoMethodError => e
         GameOverseer::Console.log("InputHandler> #{e.to_s}")

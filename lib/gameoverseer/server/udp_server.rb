@@ -6,8 +6,7 @@ module GameOverseer
     def initialize(host, port)
       GameOverseer::Console.log("Server> Started on: #{host}:#{port}.")
       GameOverseer::Services.enable
-
-      @message_manager = ObjectSpace.each_object(GameOverseer::MessageManager).first
+      @message_manager = GameOverseer::MessageManager.new
 
       @server = UDPSocket.new
       @server.bind(host, port)

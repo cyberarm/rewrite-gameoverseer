@@ -22,7 +22,7 @@ module GameOverseer
     def enable
     end
 
-    # Called when a message in recieved for this channel.
+    # Called when a message is recieved for this channel.
     def process(data)
     end
 
@@ -38,12 +38,12 @@ module GameOverseer
 
     protected
     def channel_manager
-      @channel_manager = ObjectSpace.each_object(GameOverseer::ChannelManager).first unless defined?(@channel_manager)
+      @channel_manager = ChannelManager.instance
       @channel_manager
     end
 
     def message_manager
-      @message_manager = ObjectSpace.each_object(GameOverseer::MessageManager).first unless defined?(@message_manager)
+      @message_manager = MessageManager.instance# ObjectSpace.each_object(GameOverseer::MessageManager).first unless defined?(@message_manager)
       @message_manager
     end
 
