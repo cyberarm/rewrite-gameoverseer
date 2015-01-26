@@ -15,6 +15,8 @@ require_relative "channels/channel_manager"
 
 require_relative "messages/message_manager"
 
+require_relative "clients/client_manager"
+
 require_relative "services/service"
 require_relative "services/services"
 require_relative "services/internal/services"
@@ -29,22 +31,26 @@ Thread.abort_on_exception = true
 
 # TODO: Move to own file
 module GameOverseer
-  def self.activate(host,port)
+  def self.activate(host, port)
     GameOverseer::ChannelManager.new
     GameOverseer::MessageManager.new
-    @server  = GameOverseer::ENetServerRunner.new.start(host, port)
-    console = GameOverseer::Console.new#.show
+    GameOverseer::ClientManager.new
 
-    Signal.trap("INT") do
+    @server  = GameOverseer::ENetServerRunner.new
+    Thread.new {@server.start(host, port)}
+    # console = GameOverseer::Console.new.show
+    sleep
+
+    at_exit do
       # GameOverseer::Console.instance.close
-      # @server.supervisor.terminate
+      @server.supervisor.terminate if defined?(@server.supervisor.terminate)
       puts "Server Shutdown"
     end
   end
 
   def self.deactivate
     puts "ALERT \"CONSOLE CLOSED. LOST CONTROL OF SERVER.\""
-    # @server.supervisor.terminate
+    @server.supervisor.terminate
   end
 end
 

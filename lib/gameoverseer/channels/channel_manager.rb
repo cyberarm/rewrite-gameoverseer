@@ -1,5 +1,9 @@
 module GameOverseer
   class ChannelManager
+    CHAT = 0
+    WORLD= 1
+    HANDSHAKE = 2
+    FAULT=3
     def initialize
       @channels = {}
       ChannelManager.instance = self # quick and lazy way to remove objectspace
@@ -18,9 +22,9 @@ module GameOverseer
       end
     end
 
-    def send_to_service(data, socket)
+    def send_to_service(data, client_id)
       GameOverseer::Console.log("ChannelManager> sent '#{data}' to '#{@channels[data['channel']].class}'.")
-      @channels[data['channel']].socket = socket
+      @channels[data['channel']].client_id = client_id
       @channels[data['channel']].process(data)
     end
 

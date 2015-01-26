@@ -1,6 +1,6 @@
 module GameOverseer
   class Service
-    attr_accessor :socket
+    attr_accessor :client_id
 
     def self.inherited(subclass)
       GameOverseer::Console.log "Service> added '#{subclass}' to Services::List."
@@ -9,7 +9,7 @@ module GameOverseer
 
     def initialize
       if defined?(self.setup)
-        @socket = 0
+        @client_id = 0
         setup
       end
     end

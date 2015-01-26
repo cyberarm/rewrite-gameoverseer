@@ -7,14 +7,14 @@ module GameOverseer
       MessageManager.instance = self
     end
 
-    def message_low(string, socket)
-      LOW_MESSAGES << {message: string, socket: socket}
-      GameOverseer::Console.log("MessageManager> #{string}-#{socket}")
+    def message_low(string, client_id)
+      LOW_MESSAGES << {message: string, client_id: client_id}
+      GameOverseer::Console.log("MessageManager> #{string}-#{client_id}")
     end
 
-    def message(string, socket)
-      MESSAGES << {message: string, socket: socket}
-      GameOverseer::Console.log("MessageManager> #{string}-#{socket}")
+    def message(string, client_id)
+      MESSAGES << {message: string, client_id: client_id}
+      GameOverseer::Console.log("MessageManager> #{string}-#{client_id}")
     end
 
     def messages

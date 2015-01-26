@@ -1,5 +1,6 @@
 module GameOverseer
   class Console < Gosu::Window
+    include Celluloid
     # TODO: Use Gosu::Window.record to lower number of objects that need to be updated
 
     PENDING_LOG = []
@@ -20,11 +21,12 @@ module GameOverseer
     end
 
     def draw
-      draw_ui
+      @ui_image.draw(0,0,0) if defined?(@ui_image)
     end
 
     def update
       update_ui
+      @ui_image = $window.record(720, 480) {draw_ui}
     end
 
     def setup_ui
@@ -164,7 +166,7 @@ module GameOverseer
     def self.log_it(string)
       puts string
       begin
-        @log_file = File.open("#{Dir.pwd}/logs/log-#{Time.now.strftime('%B-%d-%H-%Y')}.txt", 'a+') unless defined? @log_file
+        @log_file = File.open("#{Dir.pwd}/logs/log-#{Time.now.strftime('%B-%d-%Y')}.txt", 'a+') unless defined? @log_file
       rescue Errno::ENOENT
         Dir.mkdir("#{Dir.pwd}/logs") unless File.exist?("#{Dir.pwd}/logs") && File.directory?("#{Dir.pwd}/logs")
         retry

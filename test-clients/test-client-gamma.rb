@@ -35,7 +35,7 @@ class TestClientGamma
 
   def on_packet(data = 0, channel = 0)
     p "P: #{data}-#{channel}"
-    @client.send_packet(data, true, channel)
+    # @client.send_packet(data, true, channel)
   end
 
   def on_connect(data = 0, channel = 0)
