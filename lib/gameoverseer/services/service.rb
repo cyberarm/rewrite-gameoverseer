@@ -50,7 +50,6 @@ module GameOverseer
     def data_to_method(data)
       self.send(data['mode'], data)
       [self.methods - Class.methods].each do |method|
-        p method.to_s
         if data['mode'] == method.to_s
           self.send(data['mode'], data)
         end

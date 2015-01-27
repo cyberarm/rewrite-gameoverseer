@@ -6,13 +6,12 @@ module GameOverseer
       end
 
       def process(data)
-        p data
         data_to_method(data)
       end
 
       def extend_hand(data)
         message = MultiJson.dump({channel: 'handshake', mode: 'public_key', data: {public_key: GameOverseer::HandShake.public_key}})
-        message_manager.message("#{message}", client_id)
+        message_manager.message("#{message}", client_id, true, ChannelManager::HANDSHAKE)
         log("#{self.class}> #{message}.", Gosu::Color::RED)
       end
 

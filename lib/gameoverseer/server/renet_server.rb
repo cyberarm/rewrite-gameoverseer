@@ -32,7 +32,7 @@ module GameOverseer
     def on_connect(client_id, ip_address)
       p "Connect: #{client_id}-#{ip_address}"
       @client_manager.add(client_id, ip_address)
-      send(client_id, "HANDSHAKE", true, ChannelManager::HANDSHAKE)
+      # send(client_id, "HANDSHAKE", true, ChannelManager::HANDSHAKE)
     end
 
     def on_disconnect(client_id)
@@ -51,8 +51,8 @@ module GameOverseer
       @server.broadcast_packet(message, reliable, channel)
     end
 
-    def process_data(data, socket)
-      GameOverseer::InputHandler.process_data(data, socket)
+    def process_data(data, client_id)
+      GameOverseer::InputHandler.process_data(data, client_id)
     end
 
     def handle_connection(client_id, data, channel)
@@ -68,18 +68,14 @@ module GameOverseer
     def handle_messages
       @message_manager.messages.each do |message|
         p message[:message]
-        send(message[:client_id], message[:message])
+        send(message[:client_id], message[:message], message[:reliable], message[:channel])
+        @message_manager.messages.delete(message)
       end
 
-      @message_manager.low_messages.each do |message|
-        p message[:message]
-        send(message[:client_id], message[:message])
+      @message_manager.broadcasts.each do |message|
+        broadcast(message[:client_id], message[:message], message[:reliable], message[:channel])
+        @message_manager.broadcasts.delete(message)
       end
-
-      # TODO: implement broadcast messages in MessageManager
-      # @message_manager.broadcasts.each do |message
-      #   broadcast(message[:message], message[:client_id])
-      # end
     end
   end
 

@@ -36,9 +36,11 @@ module GameOverseer
     GameOverseer::MessageManager.new
     GameOverseer::ClientManager.new
 
+    # @console = GameOverseer::Console.new
     @server  = GameOverseer::ENetServerRunner.new
+
+    # Thread.new {@console.show}
     Thread.new {@server.start(host, port)}
-    # console = GameOverseer::Console.new.show
     sleep
 
     at_exit do

@@ -9,7 +9,6 @@ module GameOverseer
       ChannelManager.instance = self # quick and lazy way to remove objectspace
       # 'chat' => GameOverseer::InternalService::Chat,
       # 'handshake' => GameOverseer::InternalService::Handshake,
-      # 'heartbeat' => GameOverseer::InternalService::HeartBeat,
       # 'broadcast' => GameOverseer::InternalService::Broadcast,
       # 'environment' => GameOverseer::InternalService::Environment
     end
@@ -19,6 +18,8 @@ module GameOverseer
       unless @channels[_channel]
         @channels[_channel] = service
         GameOverseer::Console.log("ChannelManager> mapped '#{_channel}' to '#{service.class}'.")
+      else
+        raise "Could not map channel '#{_channel}' because '#{@channels[data[_channel]].class}' is already using it."
       end
     end
 

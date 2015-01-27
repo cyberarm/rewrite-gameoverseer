@@ -144,7 +144,7 @@ module GameOverseer
     def self.log(string)
       self.log_it(string) if string.strip.length > 0
       begin NoMethodError
-        ObjectSpace.each_object(GameOverseer::Console).first.submit_text(string, false)
+        GameOverseer::Console.instance.submit_text(string, false)
       rescue
         self.defer_log(string)
       end
@@ -152,11 +152,7 @@ module GameOverseer
 
     def self.log_with_color(string, color = Gosu::Color::WHITE)
       self.log_it(string) if string.strip.length > 0
-      begin NoMethodError
-        ObjectSpace.each_object(GameOverseer::Console).first.submit_text(string, false, color)
-      rescue
-        self.defer_log(string)
-      end
+      GameOverseer::Console.instance.submit_text(string, false, color)
     end
 
     def self.defer_log(string)
@@ -165,14 +161,15 @@ module GameOverseer
 
     def self.log_it(string)
       puts string
+      retry_limit = 0
       begin
         @log_file = File.open("#{Dir.pwd}/logs/log-#{Time.now.strftime('%B-%d-%Y')}.txt", 'a+') unless defined? @log_file
+        @log_file.write "[#{Time.now.strftime('%c')}] #{string}\n"
       rescue Errno::ENOENT
         Dir.mkdir("#{Dir.pwd}/logs") unless File.exist?("#{Dir.pwd}/logs") && File.directory?("#{Dir.pwd}/logs")
-        retry
+        retry_limit+=1
+        retry unless retry_limit >= 2
       end
-
-      @log_file.write "[#{Time.now.strftime('%c')}] #{string}\n"
     end
 
     protected
