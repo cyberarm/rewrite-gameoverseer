@@ -12,6 +12,7 @@ module GameOverseer
       @client_manager = GameOverseer::ClientManager.instance
 
       @server = ENet::Server.new(port, 4, 4, 0, 0) # Port, max clients, channels, download bandwidth, upload bandwith
+      @server.use_compression(true)
 
       @server.on_connection(method(:on_connect))
       @server.on_packet_receive(method(:on_packet))
