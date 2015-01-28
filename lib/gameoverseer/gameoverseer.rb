@@ -57,4 +57,4 @@ module GameOverseer
 end
 
 # Activate self, remove this before a release.
-GameOverseer.activate("localhost", 56789)
+# GameOverseer.activate("localhost", 56789)

@@ -7,14 +7,14 @@ module GameOverseer
       MessageManager.instance = self
     end
 
-    def message(string, client_id, reliable = false, channel = ChannelManager::CHAT)
-      MESSAGES << {message: string, client_id: client_id, reliable: reliable, channel: channel}
+    def message(client_id, string, reliable = false, channel = ChannelManager::CHAT)
+      GameOverseer::ENetServer.instance.send(client_id, string, reliable, channel)
       GameOverseer::Console.log("MessageManager> #{string}-#{client_id}")
     end
 
-    def broadcast(string, client_id, reliable = false, channel = ChannelManager::CHAT)
-      BROADCASTS << {message: string, client_id: client_id, reliable: reliable, channel: channel}
-      GameOverseer::Console.log("MessageManager> #{string}-#{client_id}")
+    def broadcast(string, reliable = false, channel = ChannelManager::CHAT)
+      GameOverseer::ENetServer.instance.broadcast(string, reliable, channel)
+      GameOverseer::Console.log("MessageManager> #{string}-#{channel}")
     end
 
     def messages

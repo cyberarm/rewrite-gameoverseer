@@ -5,6 +5,8 @@ module GameOverseer
     def initialize(host, port)
       GameOverseer::Console.log("Server> Started on: #{host}:#{port}.")
       GameOverseer::Services.enable
+      GameOverseer::ENetServer.instance = self
+
       @message_manager = GameOverseer::MessageManager.instance
       @channel_manager = GameOverseer::ChannelManager.instance
       @client_manager = GameOverseer::ClientManager.instance
@@ -14,13 +16,13 @@ module GameOverseer
       @server.on_connection(method(:on_connect))
       @server.on_packet_receive(method(:on_packet))
       @server.on_disconnection(method(:on_disconnect))
+
       async.run
     end
 
     def run
       loop do
         @server.update(1000)
-        handle_messages
       end
     end
 
@@ -32,7 +34,6 @@ module GameOverseer
     def on_connect(client_id, ip_address)
       p "Connect: #{client_id}-#{ip_address}"
       @client_manager.add(client_id, ip_address)
-      # send(client_id, "HANDSHAKE", true, ChannelManager::HANDSHAKE)
     end
 
     def on_disconnect(client_id)
@@ -42,7 +43,6 @@ module GameOverseer
 
     # send (private packet)
     def send(client_id, message, reliable = false, channel = ChannelManager::CHAT)
-      p client_id
       @server.send_packet(client_id, message, reliable, channel)
     end
 
@@ -65,17 +65,12 @@ module GameOverseer
       end
     end
 
-    def handle_messages
-      @message_manager.messages.each do |message|
-        p message[:message]
-        send(message[:client_id], message[:message], message[:reliable], message[:channel])
-        @message_manager.messages.delete(message)
-      end
+    def self.instance
+      @instance
+    end
 
-      @message_manager.broadcasts.each do |message|
-        broadcast(message[:client_id], message[:message], message[:reliable], message[:channel])
-        @message_manager.broadcasts.delete(message)
-      end
+    def self.instance=(_instance)
+      @instance = _instance
     end
   end
 
