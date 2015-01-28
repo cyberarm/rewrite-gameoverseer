@@ -7,22 +7,24 @@ module GameOverseer
       @clients = []
     end
 
-    def add(id, ip_address)
-      @clients << {id: id, ip_address: ip_address}
+    def add(client_id, ip_address)
+      @clients << {client_id: client_id, ip_address: ip_address}
+      GameOverseer::Services.client_connected(client_id, ip_address)
     end
 
-    def update(id, key, value)
+    def update(client_id, key, value)
       @clients.each_with_index do |hash, index|
-        if hash[:id] == id
+        if hash[:client_id] == client_id
           hash[key] = value
         end
       end
     end
 
-    def remove(id)
+    def remove(client_id)
       @clients.each_with_index do |hash, index|
-        if hash[:id] == id
+        if hash[:client_id] == client_id
           @clients.delete(hash)
+          GameOverseer::Services.client_disconnected(client_id)
         end
       end
     end
