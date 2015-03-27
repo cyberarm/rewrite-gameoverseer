@@ -8,6 +8,20 @@ In development.
 Any examples given are subject to be outdated at anytime.
 
 # Install
+### Using bundler
+Add this to your Gemfile
+``` ruby
+  gem "gameoverseer"
+```
+and run to install.
+```
+bundle install
+```
+
+### Or using RubyGems
+```
+gem install gameoverseer
+```
 
 # Usage
 ``` ruby
