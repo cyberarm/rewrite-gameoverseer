@@ -125,11 +125,6 @@ module GameOverseer
         scroll(:up)
       when 260  # Mouse wheel
         scroll(:down)
-      when 43
-        # Test massive console dump
-        1000.times do
-          submit_text("#{SecureRandom.uuid} #{SecureRandom.hex}", false)
-        end
       end
     end
 
@@ -143,9 +138,9 @@ module GameOverseer
 
     def self.log(string)
       self.log_it(string) if string.strip.length > 0
-      begin NoMethodError
+      begin
         GameOverseer::Console.instance.submit_text(string, false)
-      rescue
+      rescue NoMethodError
         self.defer_log(string)
       end
     end

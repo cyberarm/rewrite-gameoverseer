@@ -1,30 +1,28 @@
 require "set"
-require "net/ssh"
-require "securerandom"
 
 require "gosu"
 require "celluloid"
 require "renet"
 require "multi_json"
 
-require_relative "version"
+require_relative "gamoverseer/version"
 
-require_relative "console/console"
+require_relative "gamoverseer/console/console"
 
-require_relative "channels/channel_manager"
+require_relative "gamoverseer/channels/channel_manager"
 
-require_relative "messages/message_manager"
+require_relative "gamoverseer/messages/message_manager"
 
-require_relative "clients/client_manager"
+require_relative "gamoverseer/clients/client_manager"
 
-require_relative "services/service"
-require_relative "services/services"
-require_relative "services/internal/services"
+require_relative "gamoverseer/services/service"
+require_relative "gamoverseer/services/services"
+require_relative "gamoverseer/services/internal/services"
 
-require_relative "input_handler/input_handler"
+require_relative "gamoverseer/input_handler/input_handler"
 
-require_relative "server/renet_server"
-require_relative "server/handshake"
+require_relative "gamoverseer/server/renet_server"
+require_relative "gamoverseer/server/handshake"
 
 # TEMP
 Thread.abort_on_exception = true
