@@ -30,7 +30,7 @@ require 'gameoverseer'
 # Write a service for your game
 class GameWorld < GameOverseer::Service
   def setup
-    channel_manager.register('game_world')
+    channel_manager.register_channel('game_world', self)
   end
 
   def process(data)
