@@ -27,24 +27,26 @@ module GameOverseer
     end
 
     def version
-      raise "Method 'version' on class '#{self}' not defined, see '#{__FILE__}#version' in GameOverseer source."
       # Please use the sematic versioning system,
       # http://semver.org
       #
       # e.g.
       # "1.5.9"
       # (Major.Minor.Patch)
+      "0.0.0-default"
     end
 
     protected
     def channel_manager
-      @channel_manager = ChannelManager.instance
-      @channel_manager
+      ChannelManager.instance
     end
 
     def message_manager
-      @message_manager = MessageManager.instance# ObjectSpace.each_object(GameOverseer::MessageManager).first unless defined?(@message_manager)
-      @message_manager
+      MessageManager.instance
+    end
+
+    def client_manager
+      ClientManager.instance
     end
 
     def data_to_method(data)

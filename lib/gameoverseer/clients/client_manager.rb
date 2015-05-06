@@ -13,15 +13,25 @@ module GameOverseer
     end
 
     def update(client_id, key, value)
-      @clients.each_with_index do |hash, index|
+      @clients.each do |hash|
         if hash[:client_id] == client_id
           hash[key] = value
         end
       end
     end
 
+    def get(client_id)
+      _hash = @clients.detect do |hash|
+        if hash[:client_id] == client_id
+          true
+        end
+      end
+
+      return _hash
+    end
+
     def remove(client_id)
-      @clients.each_with_index do |hash, index|
+      @clients.each do |hash|
         if hash[:client_id] == client_id
           @clients.delete(hash)
           GameOverseer::Services.client_disconnected(client_id)
