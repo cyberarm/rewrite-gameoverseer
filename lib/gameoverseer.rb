@@ -5,24 +5,24 @@ require "celluloid"
 require "renet"
 require "multi_json"
 
-require_relative "gamoverseer/version"
+require_relative "gameoverseer/version"
 
-require_relative "gamoverseer/console/console"
+require_relative "gameoverseer/console/console"
 
-require_relative "gamoverseer/channels/channel_manager"
+require_relative "gameoverseer/channels/channel_manager"
 
-require_relative "gamoverseer/messages/message_manager"
+require_relative "gameoverseer/messages/message_manager"
 
-require_relative "gamoverseer/clients/client_manager"
+require_relative "gameoverseer/clients/client_manager"
 
-require_relative "gamoverseer/services/service"
-require_relative "gamoverseer/services/services"
-require_relative "gamoverseer/services/internal/services"
+require_relative "gameoverseer/services/service"
+require_relative "gameoverseer/services/services"
+require_relative "gameoverseer/services/internal/services"
 
-require_relative "gamoverseer/input_handler/input_handler"
+require_relative "gameoverseer/input_handler/input_handler"
 
-require_relative "gamoverseer/server/renet_server"
-require_relative "gamoverseer/server/handshake"
+require_relative "gameoverseer/server/renet_server"
+require_relative "gameoverseer/server/handshake"
 
 # TEMP
 Thread.abort_on_exception = true

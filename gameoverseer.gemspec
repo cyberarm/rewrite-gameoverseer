@@ -20,6 +20,4 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "celluloid"
   s.add_runtime_dependency "renet"
   s.add_runtime_dependency "multi_json"
-
-  # s.add_development_dependency "simplecov"
 end
