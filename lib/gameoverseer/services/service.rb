@@ -40,7 +40,7 @@ module GameOverseer
 
     # Sets methods that are safe for `data_to_method` to call
     def set_safe_methods(array)
-      raise "argument must be an array or strings or symbols" unless array.is_a?(Array)
+      raise "argument must be an array of strings or symbols" unless array.is_a?(Array)
       @safe_methods = array
     end
 
