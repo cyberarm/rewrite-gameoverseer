@@ -6,11 +6,7 @@ module GameOverseer
     FAULT=3
     def initialize
       @channels = {}
-      ChannelManager.instance = self # quick and lazy way to remove objectspace
-      # 'chat' => GameOverseer::InternalService::Chat,
-      # 'handshake' => GameOverseer::InternalService::Handshake,
-      # 'broadcast' => GameOverseer::InternalService::Broadcast,
-      # 'environment' => GameOverseer::InternalService::Environment
+      ChannelManager.instance = self
     end
 
     def register_channel(channel, service)

@@ -17,7 +17,6 @@ require_relative "gameoverseer/clients/client_manager"
 
 require_relative "gameoverseer/services/service"
 require_relative "gameoverseer/services/services"
-require_relative "gameoverseer/services/internal/services"
 
 require_relative "gameoverseer/input_handler/input_handler"
 

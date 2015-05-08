@@ -1,17 +1,18 @@
 module GameOverseer
   class Service
     attr_accessor :client_id
+    attr_reader :safe_methods
 
     def self.inherited(subclass)
-      GameOverseer::Console.log "Service> added '#{subclass}' to Services::List."
       Services.register(subclass)
+      GameOverseer::Console.log "Service> added '#{subclass}' to Services::List."
     end
 
     def initialize
       if defined?(self.setup)
         @client_id = 0
+        @safe_methods = []
         setup
-        Thread.new {enable}
       end
     end
 
@@ -37,6 +38,12 @@ module GameOverseer
       "0.0.0-default"
     end
 
+    # Sets methods that are safe for `data_to_method` to call
+    def set_safe_methods(array)
+      raise "argument must be an array or strings or symbols" unless array.is_a?(Array)
+      @safe_methods = array
+    end
+
     protected
     def channel_manager
       ChannelManager.instance
@@ -51,10 +58,28 @@ module GameOverseer
     end
 
     def data_to_method(data)
-      [self.methods - Class.methods].each do |method|
+      @safe_methods.each do |method|
         if data['mode'] == method.to_s
           self.send(data['mode'], data)
         end
+      end
+    end
+
+    # Calls Proc immediately then every milliseconds, async.
+    def every(milliseconds, &block)
+      Thread.new do
+        loop do
+          block.call
+          sleep(milliseconds/1000.0)
+        end
+      end
+    end
+
+    # Calls Proc after milliseconds have passed, async.
+    def after(milliseconds, &block)
+      Thread.new do
+        sleep(milliseconds/1000.0)
+        block.call
       end
     end
 

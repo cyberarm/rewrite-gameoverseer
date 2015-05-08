@@ -1,7 +1,7 @@
 module GameOverseer
   class Console < Gosu::Window
     include Celluloid
-    # TODO: Use Gosu::Window.record to lower number of objects that need to be updated
+    # TODO: Use Gosu::Window.record to lower number of objects that need to be drawn
 
     PENDING_LOG = []
     def initialize
