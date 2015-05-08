@@ -8,7 +8,7 @@ module GameOverseer
     end
 
     def message(client_id, string, reliable = false, channel = ChannelManager::CHAT)
-      GameOverseer::ENetServer.instance.send(client_id, string, reliable, channel)
+      GameOverseer::ENetServer.instance.transmit(client_id, string, reliable, channel)
       GameOverseer::Console.log("MessageManager> #{string}-#{client_id}")
     end
 

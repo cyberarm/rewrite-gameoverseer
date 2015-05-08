@@ -11,6 +11,7 @@ module GameOverseer
       if defined?(self.setup)
         @client_id = 0
         setup
+        Thread.new {enable}
       end
     end
 
@@ -50,7 +51,6 @@ module GameOverseer
     end
 
     def data_to_method(data)
-      self.send(data['mode'], data)
       [self.methods - Class.methods].each do |method|
         if data['mode'] == method.to_s
           self.send(data['mode'], data)

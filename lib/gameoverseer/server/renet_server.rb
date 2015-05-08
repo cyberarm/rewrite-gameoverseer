@@ -42,12 +42,12 @@ module GameOverseer
       @client_manager.remove(client_id)
     end
 
-    # send (private packet)
-    def send(client_id, message, reliable = false, channel = ChannelManager::CHAT)
+    # send message to a specific client
+    def transmit(client_id, message, reliable = false, channel = ChannelManager::CHAT)
       @server.send_packet(client_id, message, reliable, channel)
     end
 
-    # boardcast (global packet)
+    # send message to all connected clients
     def broadcast(message, reliable = false, channel = ChannelManager::CHAT)
       @server.broadcast_packet(message, reliable, channel)
     end
@@ -61,7 +61,7 @@ module GameOverseer
         data = MultiJson.load(data)
         process_data(data, client_id)
       rescue MultiJson::ParseError => e
-        send(client_id, " \"channel\": \"__UNDEFINED__\", \"mode\": \"__UNDEFINED__\", \"data\": {\"code\": 400, \"message\": \"Invalid JSON received.\"}}", true, ChannelManager::FAULT)
+        transmit(client_id, " \"channel\": \"__UNDEFINED__\", \"mode\": \"__UNDEFINED__\", \"data\": {\"code\": 400, \"message\": \"Invalid JSON received.\"}}", true, ChannelManager::FAULT)
         GameOverseer::Console.log("Server> Parse error: '#{e.to_s}'. Bad data: '#{data}' received from client.")
       end
     end

@@ -22,7 +22,7 @@ require_relative "gameoverseer/services/internal/services"
 require_relative "gameoverseer/input_handler/input_handler"
 
 require_relative "gameoverseer/server/renet_server"
-require_relative "gameoverseer/server/handshake"
+require_relative "gameoverseer/server/encryption"
 
 # TEMP
 Thread.abort_on_exception = true
