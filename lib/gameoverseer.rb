@@ -1,7 +1,7 @@
 require "set"
 
 require "gosu"
-require "celluloid"
+require "concurrent"
 require "renet"
 require "multi_json"
 
@@ -33,15 +33,15 @@ module GameOverseer
     GameOverseer::MessageManager.new
     GameOverseer::ClientManager.new
 
-    # @console = GameOverseer::Console.new
+    @console = GameOverseer::Console.new
     @server  = GameOverseer::ENetServerRunner.new
 
-    # Thread.new {@console.show}
     Thread.new {@server.start(host, port)}
+    @console.show
     sleep
 
     at_exit do
-      # GameOverseer::Console.instance.close
+      GameOverseer::Console.instance.close
       @server.supervisor.terminate if defined?(@server.supervisor.terminate)
       puts "Server Shutdown"
     end
@@ -52,6 +52,3 @@ module GameOverseer
     @server.supervisor.terminate
   end
 end
-
-# Activate self, remove this before a release.
-# GameOverseer.activate("localhost", 56789)

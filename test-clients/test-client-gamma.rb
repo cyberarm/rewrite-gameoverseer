@@ -1,5 +1,4 @@
 require "multi_json"
-require "net/ssh"
 require 'uri'
 require "renet"
 require_relative "protocol-lib"
@@ -17,6 +16,8 @@ class TestClientGamma
 
     @client.connect(2000)
     @client.send_packet("#{PROTOCOLS[:handshake_extend_hand]}", true, HANDSHAKE)
+
+    puts "Running...."
     run
   end
 
@@ -48,6 +49,8 @@ class TestClientGamma
       encrypted_auth_key_response = MultiJson.dump({'channel'=> 'handshake', 'mode' => 'authenticate', 'data' => {'auth_key' => "#{public_key.public_encrypt('HELLO_WORLD')}".force_encoding("utf-8")}})
       @client.send_packet(encrypted_auth_key_response, true, HANDSHAKE)
       puts "PAST"
+    else
+      puts "hmm"
     end
   end
 end

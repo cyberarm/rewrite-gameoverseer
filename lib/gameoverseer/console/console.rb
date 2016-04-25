@@ -1,6 +1,5 @@
 module GameOverseer
   class Console < Gosu::Window
-    include Celluloid
     # TODO: Use Gosu::Window.record to lower number of objects that need to be drawn
 
     PENDING_LOG = []
@@ -49,7 +48,7 @@ module GameOverseer
     def draw_ui
       draw_rect(0,0, 720, 26, Gosu::Color.rgb(200, 75, 25))
       draw_rect(0,454, 720, 480, Gosu::Color::WHITE)
-      text_instance.draw("GameOverSeer Console. GameOverseer version #{GameOverSeer::VERSION} #{GameOverSeer::RELEASE_NAME} #{@messages.count}", 4, 4, 3)
+      text_instance.draw("GameOverSeer Console. GameOverseer version #{GameOverseer::VERSION} #{GameOverseer::RELEASE_NAME} #{@messages.count}", 4, 4, 3)
       @current_text.draw("#{$window.text_input.text}", @current_text_x, 458, 3, 1, 1, Gosu::Color::BLACK)
       draw_rect(@caret+@current_text_x, 456, 2.0+@caret+@current_text_x, 474, Gosu::Color::BLUE, 4) if defined?(@caret) && @render_caret
 

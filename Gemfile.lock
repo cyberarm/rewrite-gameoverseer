@@ -1,34 +1,30 @@
-GIT
-  remote: https://github.com/MagLev/nio4r.git
-  revision: d22d0b9da828462f0ab14043f476388888430eb2
-  branch: johnnyt/recursive-lock-fix
+PATH
+  remote: .
   specs:
-    nio4r (1.0.1)
+    gameoverseer (0.1.2)
+      concurrent-ruby
+      gosu (= 0.10.6)
+      multi_json
+      renet
 
 GEM
   remote: https://rubygems.org/
   specs:
-    celluloid (0.16.0)
-      timers (~> 4.0.0)
-    gosu (0.8.7.2)
-    gosu (0.8.7.2-x86-mingw32)
-    hitimes (1.2.2-java)
-    hitimes (1.2.2-x86-mingw32)
-    multi_json (1.10.1)
-    net-ssh (2.9.2)
-    renet (0.1.14)
-    renet (0.1.14-x86-mingw32)
-    timers (4.0.1)
-      hitimes
+    concurrent-ruby (1.0.1)
+    concurrent-ruby (1.0.1-java)
+    gosu (0.10.6)
+    gosu (0.10.6-x64-mingw32)
+    gosu (0.10.6-x86-mingw32)
+    multi_json (1.11.3)
+    renet (0.2.1)
 
 PLATFORMS
   java
+  x64-mingw32
   x86-mingw32
 
 DEPENDENCIES
-  celluloid
-  gosu
-  multi_json
-  net-ssh
-  nio4r!
-  renet
+  gameoverseer!
+
+BUNDLED WITH
+   1.11.2

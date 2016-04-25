@@ -1,7 +1,7 @@
 module GameOverseer
-  module Encryption
 
-    # OpenSSL Public/Private Key Encryption For Initial Handshaking And Authentication Masking.
+  # OpenSSL Public/Private Key Encryption For Initial Handshaking And Authentication Masking.
+  module Encryption
     def generate(size = 512)
       @openssl_keys = OpenSSL::PKey::RSA.new(size)
     end
