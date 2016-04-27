@@ -1,4 +1,6 @@
 module GameOverseer
+
+  # Stores client data
   class ClientManager
     attr_accessor :clients
 
@@ -7,11 +9,18 @@ module GameOverseer
       @clients = []
     end
 
+    # Add client to clients list
+    # @param client_id [Integer]
+    # @param ip_address [String]
     def add(client_id, ip_address)
       @clients << {client_id: client_id, ip_address: ip_address}
       GameOverseer::Services.client_connected(client_id, ip_address)
     end
 
+    # Store client specific data in a {Hash}
+    # @param client_id [Integer] ID of client
+    # @param key [String|Symbol]
+    # @param value What the key should equal
     def update(client_id, key, value)
       @clients.each do |hash|
         if hash[:client_id] == client_id
@@ -20,6 +29,9 @@ module GameOverseer
       end
     end
 
+    # Gets client data
+    # @param client_id [Integer]
+    # @return [Hash] hash containing client data
     def get(client_id)
       _hash = @clients.detect do |hash|
         if hash[:client_id] == client_id
@@ -30,6 +42,8 @@ module GameOverseer
       return _hash
     end
 
+    # Removes client data and disconnects client
+    # @param client_id [Integer] ID of client
     def remove(client_id)
       @clients.each do |hash|
         if hash[:client_id] == client_id
@@ -39,10 +53,12 @@ module GameOverseer
       end
     end
 
+    # @return [ClientManager]
     def self.instance
       @instance
     end
 
+    # @param _instance [ClientManager]
     def self.instance=_instance
       @instance = _instance
     end

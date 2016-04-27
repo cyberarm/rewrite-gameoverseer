@@ -23,11 +23,10 @@ require_relative "gameoverseer/input_handler/input_handler"
 require_relative "gameoverseer/server/renet_server"
 require_relative "gameoverseer/server/encryption"
 
-# TEMP
-Thread.abort_on_exception = true
-
-# TODO: Move to own file
+# General purpose game server that uses services (plugins) for logic.
 module GameOverseer
+
+  # Start server
   def self.activate(host, port)
     GameOverseer::ChannelManager.new
     GameOverseer::MessageManager.new
@@ -47,6 +46,7 @@ module GameOverseer
     end
   end
 
+  # Stop server
   def self.deactivate
     puts "ALERT \"CONSOLE CLOSED. LOST CONTROL OF SERVER.\""
     @server.supervisor.terminate
