@@ -1,4 +1,5 @@
 require "set"
+require "openssl"
 
 require "gosu"
 require "concurrent"
@@ -20,14 +21,18 @@ require_relative "gameoverseer/services/services"
 
 require_relative "gameoverseer/input_handler/input_handler"
 
-require_relative "gameoverseer/server/renet_server"
-require_relative "gameoverseer/server/encryption"
+require_relative "gameoverseer/packet_handler/packet_handler"
+require_relative "gameoverseer/encryption_handler/encryption_handler"
 
+require_relative "gameoverseer/server/renet_server"
+
+
+Thread.abort_on_exception = true
 # General purpose game server that uses services (plugins) for logic.
 module GameOverseer
 
   # Start server
-  def self.activate(host, port)
+  def self.activate(host, port, packet_handler = PacketHandler, encryption_handler = nil)
     GameOverseer::ChannelManager.new
     GameOverseer::MessageManager.new
     GameOverseer::ClientManager.new
@@ -35,7 +40,7 @@ module GameOverseer
     @console = GameOverseer::Console.new
     @server  = GameOverseer::ENetServerRunner.new
 
-    Thread.new {@server.start(host, port)}
+    Thread.new {@server.start(host, port, packet_handler, encryption_handler)}
     @console.show
     sleep
 

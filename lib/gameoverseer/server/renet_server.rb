@@ -11,7 +11,7 @@ module GameOverseer
     # @param download_bandwidth [Integer] max bandwidth for downloading per-second (0 is unlimited)
     # @param upload_bandwidth [Integer] max bandwidth for uploading per-second (0 is unlimited)
     # @return [Thread]
-    def initialize(host, port, max_clients = 4, channels = 4, download_bandwidth = 0, upload_bandwidth = 0)
+    def initialize(host, port, packet_handler, encryption_handler, max_clients = 4, channels = 4, download_bandwidth = 0, upload_bandwidth = 0)
       GameOverseer::Console.log("Server> Started on: #{host}:#{port}.")
       GameOverseer::Services.enable
       GameOverseer::ENetServer.instance = self
@@ -19,6 +19,8 @@ module GameOverseer
       @message_manager = GameOverseer::MessageManager.instance
       @channel_manager = GameOverseer::ChannelManager.instance
       @client_manager = GameOverseer::ClientManager.instance
+      @packet_handler = packet_handler.new
+      @encryption_handler = encryption_handler.instance if encryption_handler
 
       @server = ENet::Server.new(port, max_clients, channels, download_bandwidth, upload_bandwidth) # Port, max clients, channels, download bandwidth, upload bandwith
       @server.use_compression(true)
@@ -48,7 +50,6 @@ module GameOverseer
     # @param data [String] data client sent
     # @param channel [Integer] channel that this was sent to
     def on_packet(client_id, data, channel)
-      p "Packet: #{client_id}-#{data}-#{channel}"
       handle_connection(client_id, data, channel)
     end
 
@@ -56,14 +57,12 @@ module GameOverseer
     # @param client_id [Integer] ID of client
     # @param ip_address [String] address of client
     def on_connect(client_id, ip_address)
-      p "Connect: #{client_id}-#{ip_address}"
       @client_manager.add(client_id, ip_address)
     end
 
     # callled when a client disconnects
     # @param client_id [Integer] ID of client
     def on_disconnect(client_id)
-      p "Disconnect: #{client_id}"
       @client_manager.remove(client_id)
     end
 
@@ -87,17 +86,21 @@ module GameOverseer
     # send data to the InputHandler for processing
     # @param data [Hash]
     # @param client_id [Integer] ID of client that sent the data
-    def process_data(data, client_id)
-      GameOverseer::InputHandler.process_data(data, client_id)
+    def process_data(client_id, data)
+      GameOverseer::InputHandler.process_data(client_id, data)
     end
 
+    # Handles received packets from clients and sends them through the {PacketHandler} for pre-processing, then sends it on to {#process_data}
+    # @param client_id [Integer]
+    # @param data [String] data received from client
+    # @param channel [Integer] channel that this packet was sent along
     def handle_connection(client_id, data, channel)
-      begin
-        data = MultiJson.load(data)
-        process_data(data, client_id)
-      rescue MultiJson::ParseError => e
-        transmit(client_id, " \"channel\": \"__UNDEFINED__\", \"mode\": \"__UNDEFINED__\", \"data\": {\"code\": 400, \"message\": \"Invalid JSON received.\"}}", true, ChannelManager::FAULT)
-        GameOverseer::Console.log("Server> Parse error: '#{e.to_s}'. Bad data: '#{data}' received from client.")
+      _data = @packet_handler.receive(client_id, data)
+      if _data
+        process_data(client_id, _data)
+      else
+        # TODO: Better error handling :D
+        transmit(client_id, '{"channel":"_error", "mode":"_error", "data":{"code":400, "message":"something went wrong, likely bad data!"}}', true, ChannelManager::FAULT)
       end
     end
 
@@ -116,8 +119,8 @@ module GameOverseer
 
   class ENetServerRunner
     attr_reader :supervisor
-    def start(host, port)
-      @supervisor = GameOverseer::ENetServer.new(host, port)
+    def start(host, port, packet_handler = PacketHandler, encryption_handler = nil)
+      @supervisor = GameOverseer::ENetServer.new(host, port, packet_handler, encryption_handler)
     end
   end
 end

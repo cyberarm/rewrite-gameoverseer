@@ -1,9 +1,9 @@
 module GameOverseer
   class InputHandler
 
-    # @param data [Hash]
     # @param client_id [Integer]
-    def self.process_data(data, client_id)
+    # @param data [Hash]
+    def self.process_data(client_id, data)
       @data = data
       @client_id = client_id
       forward_to_channel_manager if data_valid?
@@ -24,7 +24,7 @@ module GameOverseer
       count = 0
       begin
         channel_manager = GameOverseer::ChannelManager.instance
-        channel_manager.send_to_service(@data, @client_id)
+        channel_manager.send_to_service(@client_id, @data)
       rescue NoMethodError => e
         GameOverseer::Console.log("InputHandler> #{e.to_s}")
         raise if count >=2
