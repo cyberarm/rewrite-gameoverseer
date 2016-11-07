@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib", "bin"]
 
-  s.add_runtime_dependency "gosu", "0.10.6"
+  s.add_runtime_dependency "gosu", ">=0.10.6"
   s.add_runtime_dependency "concurrent-ruby"
   s.add_runtime_dependency "renet"
   s.add_runtime_dependency "multi_json"
