@@ -32,20 +32,20 @@ Thread.abort_on_exception = true
 module GameOverseer
 
   # Start server
-  def self.activate(host, port, packet_handler = PacketHandler, encryption_handler = nil)
+  def self.activate(host, port, use_inbuilt_console = false, packet_handler = PacketHandler, encryption_handler = nil)
     GameOverseer::ChannelManager.new
     GameOverseer::MessageManager.new
     GameOverseer::ClientManager.new
 
-    @console = GameOverseer::Console.new
+    @console = GameOverseer::Console.new if use_inbuilt_console
     @server  = GameOverseer::ENetServerRunner.new
 
     Thread.new {@server.start(host, port, packet_handler, encryption_handler)}
-    @console.show
+    @console.show if use_inbuilt_console
     sleep
 
     at_exit do
-      GameOverseer::Console.instance.close
+      GameOverseer::Console.instance.close if use_inbuilt_console
       @server.supervisor.terminate if defined?(@server.supervisor.terminate)
       puts "Server Shutdown"
     end
