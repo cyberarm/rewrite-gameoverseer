@@ -15,6 +15,7 @@ module GameOverseer
     def add(client_id, ip_address)
       @clients << {client_id: client_id, ip_address: ip_address}
       GameOverseer::Services.client_connected(client_id, ip_address)
+      GameOverseer::Console.log("ClientManager> client with id '#{client_id}' connected")
     end
 
     # Store client specific data in a {Hash}
@@ -49,6 +50,7 @@ module GameOverseer
         if hash[:client_id] == client_id
           @clients.delete(hash)
           GameOverseer::Services.client_disconnected(client_id)
+          GameOverseer::Console.log("ClientManager> client with id '#{client_id}' disconnected")
         end
       end
     end

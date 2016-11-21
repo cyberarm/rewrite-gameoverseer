@@ -29,7 +29,6 @@ module GameOverseer
     # @param client_id [Integer] ID of client that sent the packet
     # @param data [Hash] data from packet
     def send_to_service(client_id, data)
-      GameOverseer::Console.log("ChannelManager> sent '#{data}' to '#{@channels[data['channel']].class}'.")
       @channels[data['channel']].client_id = client_id
       @channels[data['channel']].process(data)
     end

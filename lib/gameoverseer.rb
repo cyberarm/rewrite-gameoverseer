@@ -3,7 +3,6 @@ require "openssl"
 
 require "concurrent"
 require "renet"
-require "multi_json"
 
 require_relative "gameoverseer/version"
 
@@ -26,6 +25,8 @@ require_relative "gameoverseer/services/services"
 require_relative "gameoverseer/input_handler/input_handler"
 
 require_relative "gameoverseer/packet_handler/packet_handler"
+require_relative "gameoverseer/packet_handler/json_packet_handler"
+require_relative "gameoverseer/packet_handler/messagepack_packet_handler"
 require_relative "gameoverseer/encryption_handler/encryption_handler"
 
 require_relative "gameoverseer/server/renet_server"
@@ -36,10 +37,12 @@ Thread.abort_on_exception = true
 module GameOverseer
 
   # Start server
-  def self.activate(host, port, use_inbuilt_console = false, packet_handler = PacketHandler, encryption_handler = nil)
+  def self.activate(host, port, use_inbuilt_console = false, packet_handler = JsonPacketHandler, encryption_handler = nil)
     begin
-      GameOverseer::Console.log "Using inbuilt console"
-      require "gosu" if use_inbuilt_console
+      if use_inbuilt_console
+        require "gosu"
+        GameOverseer::Console.log "Using inbuilt console"
+      end
     rescue LoadError
       fatal "Install gosu 0.10.8 or later to use inbuilt console."
     end

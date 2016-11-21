@@ -16,7 +16,6 @@ module GameOverseer
     # @param channel [Integer] What channel to send on
     def message(client_id, string, reliable = false, channel = ChannelManager::CHAT)
       GameOverseer::ENetServer.instance.transmit(client_id, string, reliable, channel)
-      GameOverseer::Console.log("MessageManager> #{string}-#{client_id}")
     end
 
 
@@ -26,7 +25,6 @@ module GameOverseer
     # @param channel [Integer] What channel to send on
     def broadcast(string, reliable = false, channel = ChannelManager::CHAT)
       GameOverseer::ENetServer.instance.broadcast(string, reliable, channel)
-      GameOverseer::Console.log("MessageManager> #{string}-#{channel}")
     end
 
     # @return [MessageManager]
