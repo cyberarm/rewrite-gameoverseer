@@ -4,7 +4,7 @@ module GameOverseer
     def setup
       begin
         require "multi_json"
-      rescue => LoadError
+      rescue LoadError
         abort "MultiJson is not installed."
       end
     end

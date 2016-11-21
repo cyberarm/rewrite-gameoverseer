@@ -4,7 +4,7 @@ module GameOverseer
     def setup
       begin
         require "msgpack"
-      rescue => LoadError
+      rescue LoadError
         abort "msgpack is not installed."
       end
     end
