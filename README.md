@@ -1,9 +1,9 @@
 [![Code Climate](https://codeclimate.com/github/cyberarm/rewrite-gameoverseer/badges/gpa.svg)](https://codeclimate.com/github/cyberarm/rewrite-gameoverseer)
 [![Inline docs](http://inch-ci.org/github/cyberarm/rewrite-gameoverseer.svg?branch=master)](http://inch-ci.org/github/cyberarm/rewrite-gameoverseer)
+[![Join the chat at https://gitter.im/gameoverseer/Lobby](https://badges.gitter.im/gameoverseer/Lobby.svg)](https://gitter.im/gameoverseer/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 # GameOverseer
 
-[![Join the chat at https://gitter.im/gameoverseer/Lobby](https://badges.gitter.im/gameoverseer/Lobby.svg)](https://gitter.im/gameoverseer/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 A game server, designed to be able to play host to up to 4 players in Planet Wars.
 
 This repo is a complete rewrite of  [GameOverseer](https://github.com/cyberarm/gameoverseer).
