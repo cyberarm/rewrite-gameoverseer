@@ -72,6 +72,7 @@ module GameOverseer
     # Uses the 'mode' from a packet to call the method of the same name
     # @param data [Hash] data from packet
     def data_to_method(data)
+      raise "No safe methods defined!" unless @safe_methods.size > 0
       @safe_methods.each do |method|
         if data['mode'] == method.to_s
           self.send(data['mode'], data)

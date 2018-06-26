@@ -4,6 +4,9 @@ module GameOverseer
     def setup
       begin
         require "multi_json"
+        if defined?(Oj)
+          Oj.default_options={mode: :strict}
+        end
       rescue LoadError
         abort "MultiJson is not installed."
       end
